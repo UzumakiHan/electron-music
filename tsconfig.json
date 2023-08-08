@@ -6,14 +6,19 @@
     "moduleResolution": "Node",
     "strict": true,
     "jsx": "preserve",
+    "baseUrl":"./",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
-    "noEmit": true
+    "noEmit": true,
+    "allowJs": true,
+    "paths": {
+      "@/*": ["src/*"],
+    },
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/common/song.js"],
   "references": [
     { "path": "./tsconfig.node.json" }
   ]

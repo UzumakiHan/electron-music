@@ -1,9 +1,14 @@
 import { rmSync } from 'node:fs'
 import { defineConfig } from 'vite'
+import UnoCSS from 'unocss/vite'
 import vue from '@vitejs/plugin-vue'
 import electron from 'vite-plugin-electron'
 import renderer from 'vite-plugin-electron-renderer'
 import pkg from './package.json'
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -16,6 +21,13 @@ export default defineConfig(({ command }) => {
   return {
     plugins: [
       vue(),
+      AutoImport({
+        resolvers: [ElementPlusResolver()],
+      }),
+      Components({
+        resolvers: [ElementPlusResolver()],
+      }),
+      UnoCSS(),
       electron([
         {
           // Main-Process entry file of the Electron App.
@@ -60,13 +72,39 @@ export default defineConfig(({ command }) => {
       // Use Node.js API in the Renderer-process
       renderer(),
     ],
-    server: process.env.VSCODE_DEBUG && (() => {
-      const url = new URL(pkg.debug.env.VITE_DEV_SERVER_URL)
-      return {
-        host: url.hostname,
-        port: +url.port,
+    css: {
+      preprocessorOptions: {
+        less: {
+          modifyVars: {
+            hack: `true; @import (reference) "${resolve('src/assets/less/main.less')}";`,
+          },
+          javascriptEnabled: true,
+        }
       }
-    })(),
+    },
+    resolve: {
+      alias: {
+        '@': resolve(__dirname, 'src'),
+
+
+      }
+    },
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://127.0.0.1:3000',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+      }
+    },
+    // server: process.env.VSCODE_DEBUG && (() => {
+    //   const url = new URL(pkg.debug.env.VITE_DEV_SERVER_URL)
+    //   return {
+    //     host: url.hostname,
+    //     port: +url.port,
+    //   }
+    // })(),
     clearScreen: false,
   }
 })
