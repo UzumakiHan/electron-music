@@ -28,7 +28,7 @@
     "@types/qs": "^6.9.7",
     "@types/swiper": "^6.0.0",
     "@vitejs/plugin-vue": "^4.1.0",
-    "electron": "^25.0.1",
+    "electron": "^26.2.4",
     "electron-builder": "^24.4.0",
     "electron-icon-builder": "^2.0.1",
     "less": "^4.1.3",
